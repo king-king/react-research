@@ -9,11 +9,14 @@
 <script src="../src/build/react.js"></script>
 <script src="../src/build/react-dom.js"></script>
 <script src="../src/build/browser.js"></script>
-<script type="text/jsx" src="helloword.js"></script>
-<script type="text/jsx">
-	import React , {Component} from 'react';
+<script type="text/babel">
+	import React from 'react';
+	import ReactDOM from 'react-dom';
 	ReactDOM.render(
-            <h1>Hello, world!</h1> ,
+            <h1>
+                <div>Hello, world!</div>
+            </h1>
+		,
 		document.querySelector( '.example' )
 	);
 </script>
