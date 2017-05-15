@@ -5,9 +5,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 ReactDOM.render(
-<h1>
-<div>Hello, world!</div>
-</h1>
+    <h1>
+        <div>Hello, world!</div>
+    </h1>
     ,
     document.querySelector('.example')
 );
