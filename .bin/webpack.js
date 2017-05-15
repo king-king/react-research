@@ -23,7 +23,14 @@ const bundle = webpack({
                 ]
             }
         ]
-    }
+    },
+    plugins: [
+        new webpack.optimize.UglifyJsPlugin({
+            compress: {
+                warnings: false
+            }
+        })
+    ]
 });
 
 bundle.run(function () {
