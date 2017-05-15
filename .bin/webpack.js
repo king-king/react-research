@@ -6,8 +6,7 @@ let path = require("path");
 
 const bundle = webpack({
     entry: [
-        "../test/webpack/index.js",
-        "../test/webpack/index0.js"
+        "../test/webpack/index.js"
     ],
     output: {
         path: path.resolve("../test/webpack/"), // string
