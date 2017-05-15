@@ -14,8 +14,14 @@ const bundle = webpack({
     },
     module: {
         rules: [
-            {test: /\.css$/, use: 'css-loader'},
-            {test: /\.ts$/, use: 'ts-loader'}
+            {
+                test: /\.css$/,
+                use: [
+                    // 这里的顺序很重要
+                    {loader: "style-loader"},
+                    {loader: "css-loader"}
+                ]
+            }
         ]
     }
 });
