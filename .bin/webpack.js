@@ -3,14 +3,18 @@
  */
 let webpack = require("webpack");
 let path = require("path");
-console.log(__dirname);
 
-webpack({
-    entry: "../test/webpack/index.js",
+const bundle = webpack({
+    entry: [
+        "../test/webpack/index.js",
+        "../test/webpack/index0.js"
+    ],
     output: {
         path: path.resolve("../test/webpack/"), // string
         filename: "bundle.js"
     }
-}, function (err, stats) {
-    err ? console.log(err) : console.log(stats)
+});
+
+bundle.run(function () {
+
 });
