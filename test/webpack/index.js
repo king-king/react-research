@@ -7,6 +7,6 @@ import a from "./tool.js";
 
 import css from "./style.css";
 
-console.log(css.back);
+console.log(css);
 console.log(css.toString());
 a.sayName();
