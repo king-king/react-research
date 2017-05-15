@@ -21,5 +21,8 @@
   "homepage": "https://github.com/king-king/react-research#readme",
   "dependencies": {
     "babel-preset-react": "^6.24.1"
+  },
+  "devDependencies": {
+    "webpack": "^2.5.1"
   }
 }
