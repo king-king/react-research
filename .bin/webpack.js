@@ -11,6 +11,12 @@ const bundle = webpack({
     output: {
         path: path.resolve("../test/webpack/"), // string
         filename: "bundle.js"
+    },
+    module: {
+        rules: [
+            {test: /\.css$/, use: 'css-loader'},
+            {test: /\.ts$/, use: 'ts-loader'}
+        ]
     }
 });
 
