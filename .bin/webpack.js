@@ -34,6 +34,6 @@ const bundle = webpack({
     ]
 });
 
-bundle.run(function () {
-
+bundle.run((err, stats) => {
+    console.log(err ? err : stats);
 });
