@@ -5,12 +5,13 @@ let webpack = require("webpack");
 let path = require("path");
 
 const bundle = webpack({
-    entry: [
-        "../test/webpack/index.js"
-    ],
+    entry: {
+        main: "../test/webpack/index.js",
+        mainShop: "../test/webpack/shop.js"
+    },
     output: {
         path: path.resolve("../test/webpack/"), // string
-        filename: "bundle.js"
+        filename: "[name]-[hash].js"
     },
     module: {
         rules: [
