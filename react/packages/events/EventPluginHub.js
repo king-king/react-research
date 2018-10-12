@@ -6,32 +6,44 @@
  * @flow
  */
 
-import {rethrowCaughtError} from 'shared/ReactErrorUtils';
+import {
+    rethrowCaughtError
+} from 'shared/ReactErrorUtils';
 import invariant from 'shared/invariant';
 
 import {
-  injectEventPluginOrder,
-  injectEventPluginsByName,
-  plugins,
+    injectEventPluginOrder,
+    injectEventPluginsByName,
+    plugins,
 } from './EventPluginRegistry';
 import {
-  executeDispatchesInOrder,
-  getFiberCurrentPropsFromNode,
+    executeDispatchesInOrder,
+    getFiberCurrentPropsFromNode,
 } from './EventPluginUtils';
 import accumulateInto from './accumulateInto';
 import forEachAccumulated from './forEachAccumulated';
 
-import type {PluginModule} from './PluginModuleType';
-import type {ReactSyntheticEvent} from './ReactSyntheticEventType';
-import type {Fiber} from 'react-reconciler/src/ReactFiber';
-import type {AnyNativeEvent} from './PluginModuleType';
-import type {TopLevelType} from './TopLevelEventTypes';
+import type {
+    PluginModule
+} from './PluginModuleType';
+import type {
+    ReactSyntheticEvent
+} from './ReactSyntheticEventType';
+import type {
+    Fiber
+} from 'react-reconciler/src/ReactFiber';
+import type {
+    AnyNativeEvent
+} from './PluginModuleType';
+import type {
+    TopLevelType
+} from './TopLevelEventTypes';
 
 /**
  * Internal queue of events that have accumulated their dispatches and are
  * waiting to have their dispatches executed.
  */
-let eventQueue: ?(Array<ReactSyntheticEvent> | ReactSyntheticEvent) = null;
+let eventQueue: ? (Array < ReactSyntheticEvent > | ReactSyntheticEvent) = null;
 
 /**
  * Dispatches an event and releases it back into the pool, unless persistent.
@@ -41,49 +53,49 @@ let eventQueue: ?(Array<ReactSyntheticEvent> | ReactSyntheticEvent) = null;
  * @private
  */
 const executeDispatchesAndRelease = function(
-  event: ReactSyntheticEvent,
-  simulated: boolean,
+    event: ReactSyntheticEvent,
+    simulated: boolean,
 ) {
-  if (event) {
-    executeDispatchesInOrder(event, simulated);
+    if (event) {
+        executeDispatchesInOrder(event, simulated);
 
-    if (!event.isPersistent()) {
-      event.constructor.release(event);
+        if (!event.isPersistent()) {
+            event.constructor.release(event);
+        }
     }
-  }
 };
 const executeDispatchesAndReleaseSimulated = function(e) {
-  return executeDispatchesAndRelease(e, true);
+    return executeDispatchesAndRelease(e, true);
 };
 const executeDispatchesAndReleaseTopLevel = function(e) {
-  return executeDispatchesAndRelease(e, false);
+    return executeDispatchesAndRelease(e, false);
 };
 
 function isInteractive(tag) {
-  return (
-    tag === 'button' ||
-    tag === 'input' ||
-    tag === 'select' ||
-    tag === 'textarea'
-  );
+    return (
+        tag === 'button' ||
+        tag === 'input' ||
+        tag === 'select' ||
+        tag === 'textarea'
+    );
 }
 
 function shouldPreventMouseEvent(name, type, props) {
-  switch (name) {
-    case 'onClick':
-    case 'onClickCapture':
-    case 'onDoubleClick':
-    case 'onDoubleClickCapture':
-    case 'onMouseDown':
-    case 'onMouseDownCapture':
-    case 'onMouseMove':
-    case 'onMouseMoveCapture':
-    case 'onMouseUp':
-    case 'onMouseUpCapture':
-      return !!(props.disabled && isInteractive(type));
-    default:
-      return false;
-  }
+    switch (name) {
+        case 'onClick':
+        case 'onClickCapture':
+        case 'onDoubleClick':
+        case 'onDoubleClickCapture':
+        case 'onMouseDown':
+        case 'onMouseDownCapture':
+        case 'onMouseMove':
+        case 'onMouseMoveCapture':
+        case 'onMouseUp':
+        case 'onMouseUpCapture':
+            return !!(props.disabled && isInteractive(type));
+        default:
+            return false;
+    }
 }
 
 /**
@@ -113,16 +125,16 @@ function shouldPreventMouseEvent(name, type, props) {
  * Methods for injecting dependencies.
  */
 export const injection = {
-  /**
-   * @param {array} InjectedEventPluginOrder
-   * @public
-   */
-  injectEventPluginOrder,
+    /**
+     * @param {array} InjectedEventPluginOrder
+     * @public
+     */
+    injectEventPluginOrder,
 
-  /**
-   * @param {object} injectedNamesToPlugins Map from names to plugin modules.
-   */
-  injectEventPluginsByName,
+    /**
+     * @param {object} injectedNamesToPlugins Map from names to plugin modules.
+     */
+    injectEventPluginsByName,
 };
 
 /**
@@ -131,31 +143,31 @@ export const injection = {
  * @return {?function} The stored callback.
  */
 export function getListener(inst: Fiber, registrationName: string) {
-  let listener;
+    let listener;
 
-  // TODO: shouldPreventMouseEvent is DOM-specific and definitely should not
-  // live here; needs to be moved to a better place soon
-  const stateNode = inst.stateNode;
-  if (!stateNode) {
-    // Work in progress (ex: onload events in incremental mode).
-    return null;
-  }
-  const props = getFiberCurrentPropsFromNode(stateNode);
-  if (!props) {
-    // Work in progress.
-    return null;
-  }
-  listener = props[registrationName];
-  if (shouldPreventMouseEvent(registrationName, inst.type, props)) {
-    return null;
-  }
-  invariant(
-    !listener || typeof listener === 'function',
-    'Expected `%s` listener to be a function, instead got a value of `%s` type.',
-    registrationName,
-    typeof listener,
-  );
-  return listener;
+    // TODO: shouldPreventMouseEvent is DOM-specific and definitely should not
+    // live here; needs to be moved to a better place soon
+    const stateNode = inst.stateNode;
+    if (!stateNode) {
+        // Work in progress (ex: onload events in incremental mode).
+        return null;
+    }
+    const props = getFiberCurrentPropsFromNode(stateNode);
+    if (!props) {
+        // Work in progress.
+        return null;
+    }
+    listener = props[registrationName];
+    if (shouldPreventMouseEvent(registrationName, inst.type, props)) {
+        return null;
+    }
+    invariant(
+        !listener || typeof listener === 'function',
+        'Expected `%s` listener to be a function, instead got a value of `%s` type.',
+        registrationName,
+        typeof listener,
+    );
+    return listener;
 }
 
 /**
@@ -166,78 +178,78 @@ export function getListener(inst: Fiber, registrationName: string) {
  * @internal
  */
 function extractEvents(
-  topLevelType: TopLevelType,
-  targetInst: null | Fiber,
-  nativeEvent: AnyNativeEvent,
-  nativeEventTarget: EventTarget,
-): Array<ReactSyntheticEvent> | ReactSyntheticEvent | null {
-  let events = null;
-  for (let i = 0; i < plugins.length; i++) {
-    // Not every plugin in the ordering may be loaded at runtime.
-    const possiblePlugin: PluginModule<AnyNativeEvent> = plugins[i];
-    if (possiblePlugin) {
-      const extractedEvents = possiblePlugin.extractEvents(
+    topLevelType: TopLevelType,
+    targetInst: null | Fiber,
+    nativeEvent: AnyNativeEvent,
+    nativeEventTarget: EventTarget,
+): Array < ReactSyntheticEvent > | ReactSyntheticEvent | null {
+    let events = null;
+    for (let i = 0; i < plugins.length; i++) {
+        // Not every plugin in the ordering may be loaded at runtime.
+        const possiblePlugin: PluginModule < AnyNativeEvent > = plugins[i];
+        if (possiblePlugin) {
+            const extractedEvents = possiblePlugin.extractEvents(
+                topLevelType,
+                targetInst,
+                nativeEvent,
+                nativeEventTarget,
+            );
+            if (extractedEvents) {
+                events = accumulateInto(events, extractedEvents);
+            }
+        }
+    }
+    return events;
+}
+
+export function runEventsInBatch(
+    events: Array < ReactSyntheticEvent > | ReactSyntheticEvent | null,
+    simulated: boolean,
+) {
+    if (events !== null) {
+        eventQueue = accumulateInto(eventQueue, events);
+    }
+
+    // Set `eventQueue` to null before processing it so that we can tell if more
+    // events get enqueued while processing.
+    const processingEventQueue = eventQueue;
+    eventQueue = null;
+
+    if (!processingEventQueue) {
+        return;
+    }
+
+    if (simulated) {
+        forEachAccumulated(
+            processingEventQueue,
+            executeDispatchesAndReleaseSimulated,
+        );
+    } else {
+        forEachAccumulated(
+            processingEventQueue,
+            executeDispatchesAndReleaseTopLevel,
+        );
+    }
+    invariant(
+        !eventQueue,
+        'processEventQueue(): Additional events were enqueued while processing ' +
+        'an event queue. Support for this has not yet been implemented.',
+    );
+    // This would be a good time to rethrow if any of the event handlers threw.
+    rethrowCaughtError();
+}
+
+export function runExtractedEventsInBatch(
+    topLevelType: TopLevelType,
+    targetInst: null | Fiber,
+    nativeEvent: AnyNativeEvent,
+    nativeEventTarget: EventTarget,
+) {
+    const events = extractEvents(
         topLevelType,
         targetInst,
         nativeEvent,
         nativeEventTarget,
-      );
-      if (extractedEvents) {
-        events = accumulateInto(events, extractedEvents);
-      }
-    }
-  }
-  return events;
-}
-
-export function runEventsInBatch(
-  events: Array<ReactSyntheticEvent> | ReactSyntheticEvent | null,
-  simulated: boolean,
-) {
-  if (events !== null) {
-    eventQueue = accumulateInto(eventQueue, events);
-  }
-
-  // Set `eventQueue` to null before processing it so that we can tell if more
-  // events get enqueued while processing.
-  const processingEventQueue = eventQueue;
-  eventQueue = null;
-
-  if (!processingEventQueue) {
-    return;
-  }
-
-  if (simulated) {
-    forEachAccumulated(
-      processingEventQueue,
-      executeDispatchesAndReleaseSimulated,
     );
-  } else {
-    forEachAccumulated(
-      processingEventQueue,
-      executeDispatchesAndReleaseTopLevel,
-    );
-  }
-  invariant(
-    !eventQueue,
-    'processEventQueue(): Additional events were enqueued while processing ' +
-      'an event queue. Support for this has not yet been implemented.',
-  );
-  // This would be a good time to rethrow if any of the event handlers threw.
-  rethrowCaughtError();
-}
-
-export function runExtractedEventsInBatch(
-  topLevelType: TopLevelType,
-  targetInst: null | Fiber,
-  nativeEvent: AnyNativeEvent,
-  nativeEventTarget: EventTarget,
-) {
-  const events = extractEvents(
-    topLevelType,
-    targetInst,
-    nativeEvent,
-    nativeEventTarget,
-  );
-  runEventsInBatch(events, false);
+    runEventsInBatch(events, false);
 }
