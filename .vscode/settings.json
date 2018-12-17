@@ -1,7 +1,8 @@
 {
     "files.associations": {
-        "*.js": "javascriptreact"
+        "*.js": "typescript"
     },
     "eslint.autoFixOnSave": true,
+    "typescript.validate.enable": false,
     "javascript.validate.enable": false
 }
